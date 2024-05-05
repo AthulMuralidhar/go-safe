@@ -1,49 +1,28 @@
-#include <curl/curl.h>
-#include <iostream>
-#include "raylib.h"
+#include <gtkmm.h>
 
-int main()
+// run command: g++ main.cpp -o main `pkg-config --cflags --libs gtkmm-3.0` -std=c++17   && ./main
+// main thing to note - this is only gtkmm3.0 compatible
+// things change in gtk4.0 so watch out! 
+
+
+class MyWindow : public Gtk::Window
 {
-    CURL *curl;
-    CURLcode res;
+public:
+  MyWindow();
+};
 
-    curl = curl_easy_init();
-    if (curl)
-    {
-        curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:8080/api/data");
-        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+MyWindow::MyWindow()
+{
+  set_title("Basic application");
+  set_default_size(200, 200);
+}
 
-        res = curl_easy_perform(curl);
-        if (res != CURLE_OK)
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+int main(int argc, char *argv[])
+{
+  Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "org.gtkmm.examples.base");
 
-        curl_easy_cleanup(curl);
-    }
+  MyWindow window; // Create an instance of MyWindow
 
-    // Initialization
-    const int screenWidth = 800;
-    const int screenHeight = 450;
-
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
-
-    SetTargetFPS(60); // Set our game to run at 60 frames-per-second
-
-    // Main game loop
-    while (!WindowShouldClose()) // Detect window close button or ESC key
-    {
-        // Update
-
-        // Draw
-        BeginDrawing();
-
-        ClearBackground(RAYWHITE);
-        DrawText("Congrats! You created your first window using raylib in C++!", 190, 200, 20, LIGHTGRAY);
-
-        EndDrawing();
-    }
-
-    // De-Initialization
-    CloseWindow(); // Close window and OpenGL context
-
-    return 0;
+  // Shows the window and returns when it is closed.
+  return app->run(window);
 }
